@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Ética e Cidadania - 10 Fases</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+background:linear-gradient(-45deg,#0f172a,#1d4ed8,#06b6d4,#2563eb);
+background-size:400% 400%;
+animation:bg 10s ease infinite;
+color:white;
+}
+
+@keyframes bg{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+.container{
+width:100%;
+max-width:1100px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(12px);
+padding:35px;
+border-radius:30px;
+box-shadow:0 10px 40px rgba(0,0,0,.4);
+}
+
+.screen{display:none}
+.active{display:block}
+
+h1{
+font-size:52px;
+margin-bottom:15px;
+text-align:center;
+}
+
+.subtitle{
+font-size:24px;
+text-align:center;
+margin-bottom:25px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.info{
+background:rgba(255,255,255,.1);
+padding:14px 18px;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.progress{
+height:16px;
+background:rgba(255,255,255,.15);
+border-radius:30px;
+overflow:hidden;
+margin-bottom:25px;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+transition:.3s;
+}
+
+.question{
+font-size:34px;
+background:rgba(255,255,255,.08);
+padding:30px;
+border-radius:25px;
+margin-bottom:20px;
+line-height:1.4;
+}
+
+.answers button,.main-btn{
+width:100%;
+padding:20px;
+margin:10px 0;
+border:none;
+border-radius:18px;
+font-size:22px;
+font-weight:800;
+cursor:pointer;
+transition:.2s;
+}
+
+.answers button{
+background:white;
+color:#111827;
+}
+
+.answers button:hover{
+transform:scale(1.02);
+}
+
+.main-btn{
+background:linear-gradient(90deg,#22c55e,#16a34a);
+color:white;
+}
+
+.result{
+font-size:28px;
+line-height:2;
+text-align:center;
+}
+
+#message{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:90px;
+font-weight:900;
+display:none;
+z-index:999;
+}
+
+.correct{color:#4ade80}
+.wrong{color:#ff6b6b}
+
+@media(max-width:700px){
+h1{font-size:38px}
+.question{font-size:26px}
+.answers button,.main-btn{font-size:18px}
+#message{font-size:50px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div id="start" class="screen active">
+<h1>🌎 Quiz Ética e Cidadania</h1>
+<p class="subtitle">10 fases • 10 perguntas por fase</p>
+<button class="main-btn" onclick="startGame()">▶ COMEÇAR</button>
+</div>
+
+<div id="quiz" class="screen">
+<div class="top">
+<div class="info" id="phase">🏆 Fase 1</div>
+<div class="info" id="counter">📚 1/10</div>
+<div class="info" id="timer">⏳ 15s</div>
+<div class="info" id="score">⭐ 0</div>
+</div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+</div>
+
+<div id="result" class="screen">
+<h1>🏁 Resultado da Fase</h1>
+
+<div class="result">
+<p id="points"></p>
+<p id="hits"></p>
+<p id="errors"></p>
+<p id="msg"></p>
+</div>
+
+<button class="main-btn" id="nextBtn" onclick="nextPhase()">➡ Próxima Fase</button>
+<button class="main-btn" onclick="location.reload()">🔄 Reiniciar Quiz</button>
+</div>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+
+function createQuestions(level){
+const arr = [];
+for(let i=1;i<=10;i++){
+arr.push({
+question:`Fase ${level}: Qual atitude demonstra maior consciência ética e cidadã em uma situação social complexa número ${i}?`,
+answers:[
+{text:"Agir com responsabilidade, respeito coletivo e honestidade",correct:true},
+{text:"Ignorar regras quando for conveniente",correct:false},
+{text:"Pensar apenas no benefício próprio",correct:false},
+{text:"Espalhar informações falsas para obter vantagem",correct:false}
+]
+});
+}
+return arr;
+}
+
+const phases = [
+createQuestions(1),
+createQuestions(2),
+createQuestions(3),
+createQuestions(4),
+createQuestions(5),
+createQuestions(6),
+createQuestions(7),
+createQuestions(8),
+createQuestions(9),
+createQuestions(10)
+];
+
+let currentPhase = 0;
+let currentQuestion = 0;
+let score = 0;
+let hits = 0;
+let errors = 0;
+let time = 15;
+let timer;
+
+const start = document.getElementById("start");
+const quiz = document.getElementById("quiz");
+const result = document.getElementById("result");
+
+function startGame(){
+start.classList.remove("active");
+quiz.classList.add("active");
+showQuestion();
+}
+
+function startTimer(){
+clearInterval(timer);
+time = 15;
+document.getElementById("timer").innerHTML = `⏳ ${time}s`;
+
+timer = setInterval(()=>{
+time--;
+document.getElementById("timer").innerHTML = `⏳ ${time}s`;
+
+if(time <= 0){
+clearInterval(timer);
+errors++;
+feedback("⏰ TEMPO!",false);
+}
+},1000);
+}
+
+function showQuestion(){
+const q = phases[currentPhase][currentQuestion];
+
+document.getElementById("phase").innerHTML = `🏆 Fase ${currentPhase+1}`;
+document.getElementById("counter").innerHTML = `📚 ${currentQuestion+1}/10`;
+document.getElementById("score").innerHTML = `⭐ ${score}`;
+document.getElementById("question").innerHTML = q.question;
+
+document.getElementById("bar").style.width = `${((currentQuestion+1)/10)*100}%`;
+
+const answers = document.getElementById("answers");
+answers.innerHTML = "";
+
+q.answers.sort(()=>Math.random()-0.5);
+
+q.answers.forEach(a=>{
+const btn = document.createElement("button");
+btn.innerHTML = a.text;
+
+btn.onclick = ()=>{
+clearInterval(timer);
+
+if(a.correct){
+score += 10;
+hits++;
+feedback("✅ ACERTOU",true);
+}else{
+errors++;
+feedback("❌ ERROU",false);
+}
+};
+
+answers.appendChild(btn);
+});
+
+startTimer();
+}
+
+function feedback(text,correct){
+const msg = document.getElementById("message");
+msg.innerHTML = text;
+msg.className = correct ? "correct" : "wrong";
+msg.style.display = "block";
+
+setTimeout(()=>{
+msg.style.display = "none";
+currentQuestion++;
+
+if(currentQuestion < 10){
+showQuestion();
+}else{
+showResults();
+}
+},1500);
+}
+
+function showResults(){
+quiz.classList.remove("active");
+result.classList.add("active");
+
+document.getElementById("points").innerHTML = `⭐ Pontuação: ${score}`;
+document.getElementById("hits").innerHTML = `✅ Você acertou: ${hits}`;
+document.getElementById("errors").innerHTML = `❌ Você errou: ${errors}`;
+
+if(currentPhase === 9){
+document.getElementById("nextBtn").style.display = "none";
+document.getElementById("msg").innerHTML = "🏆 Parabéns! Você concluiu todas as 10 fases!";
+}else{
+document.getElementById("nextBtn").style.display = "block";
+document.getElementById("msg").innerHTML = "🚀 Prepare-se para a próxima fase!";
+}
+}
+
+function nextPhase(){
+currentPhase++;
+currentQuestion = 0;
+
+result.classList.remove("active");
+quiz.classList.add("active");
+
+showQuestion();
+}
+</script>
+
+</body>
+</html>
