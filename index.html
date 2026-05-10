@@ -130,14 +130,20 @@ text-align:center;
 }
 
 #message{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-font-size:90px;
-font-weight:900;
+position:fixed !important;
+top:50% !important;
+left:50% !important;
+transform:translate(-50%,-50%) !important;
+font-size:20vw !important;
+line-height:1 !important;
+font-weight:900 !important;
 display:none;
-z-index:999;
+z-index:99999 !important;
+text-shadow:0 0 60px rgba(0,0,0,1) !important;
+max-width:100vw !important;
+word-wrap:break-word !important;
+text-align:center !important;
+width:100% !important;
 }
 
 .correct{color:#4ade80}
@@ -147,10 +153,32 @@ z-index:999;
 h1{font-size:38px}
 .question{font-size:26px}
 .answers button,.main-btn{font-size:18px}
-#message{font-size:50px}
+#message{
+position:fixed !important;
+top:50% !important;
+left:50% !important;
+transform:translate(-50%,-50%) !important;
+font-size:20vw !important;
+line-height:1 !important;
+font-weight:900 !important;
+display:none;
+z-index:99999 !important;
+text-shadow:0 0 60px rgba(0,0,0,1) !important;
+max-width:100vw !important;
+word-wrap:break-word !important;
+text-align:center !important;
+width:100% !important;
+}
 }
 </style>
-</head>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+#rankingModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:100000;justify-content:center;align-items:center;}
+#rankingContent{background:rgba(255,255,255,0.15);backdrop-filter:blur(15px);padding:40px;border-radius:30px;max-width:500px;width:90%;text-align:center;}
+#rankingContent h2{font-size:40px;margin-bottom:20px;}
+#rankingList{font-size:24px;line-height:2;margin:20px 0;}
+#rankingList div{background:rgba(255,255,255,0.1);padding:10px;margin:8px 0;border-radius:15px;}
+</style></head>
 
 <body>
 
@@ -189,7 +217,7 @@ h1{font-size:38px}
 </div>
 
 <button class="main-btn" id="nextBtn" onclick="nextPhase()">➡ Próxima Fase</button>
-<button class="main-btn" onclick="location.reload()">🔄 Reiniciar Quiz</button>
+<button class="main-btn" onclick="if(confirm('Tem certeza? Isso vai apagar todos os pontos salvos.')) limparProgresso()">🔄 Zerar Tudo e Reiniciar</button>
 </div>
 
 <div id="message"></div>
@@ -198,41 +226,57 @@ h1{font-size:38px}
 
 <script>
 
-function createQuestions(level){
-const arr = [];
-for(let i=1;i<=10;i++){
-arr.push({
-question:`Fase ${level}: Qual atitude demonstra maior consciência ética e cidadã em uma situação social complexa número ${i}?`,
-answers:[
-{text:"Agir com responsabilidade, respeito coletivo e honestidade",correct:true},
-{text:"Ignorar regras quando for conveniente",correct:false},
-{text:"Pensar apenas no benefício próprio",correct:false},
-{text:"Espalhar informações falsas para obter vantagem",correct:false}
-]
-});
-}
-return arr;
+const phases = [[{"question": "Segundo o trabalho, qual é o papel da ética e da cidadania na vida em sociedade?", "answers": [{"text": "Orientam o comportamento e o exercício de direitos e deveres", "correct": true}, {"text": "Servem apenas para decorar provas", "correct": false}, {"text": "São conceitos sem aplicação prática", "correct": false}, {"text": "Limitam a liberdade individual", "correct": false}]}, {"question": "A ética, conforme o texto, trata de quê?", "answers": [{"text": "Valores que guiam as ações humanas", "correct": true}, {"text": "Apenas de leis penais", "correct": false}, {"text": "Exclusivamente de economia", "correct": false}, {"text": "Somente de tradições familiares", "correct": false}]}, {"question": "Cidadania envolve o quê no texto apresentado?", "answers": [{"text": "Participação social e responsabilidade", "correct": true}, {"text": "Apenas pagar impostos", "correct": false}, {"text": "Só votar a cada 4 anos", "correct": false}, {"text": "Ignorar os problemas coletivos", "correct": false}]}, {"question": "De acordo com a introdução do trabalho, qual é a consequência direta da aplicação conjunta da ética e da cidadania na estrutura social?", "answers": [{"text": "Formação de cidadãos conscientes e sociedade mais justa", "correct": true}, {"text": "Aumento da burocracia", "correct": false}, {"text": "Conflitos entre pessoas", "correct": false}, {"text": "Redução de direitos", "correct": false}]}, {"question": "O texto afirma que ética e cidadania ajudam a construir que tipo de sociedade?", "answers": [{"text": "Mais justa", "correct": true}, {"text": "Mais individualista", "correct": false}, {"text": "Menos participativa", "correct": false}, {"text": "Sem regras", "correct": false}]}, {"question": "Quem apresentou o trabalho sobre Ética e Cidadania?", "answers": [{"text": "Alunos da Escola Municipal Fernando Rodrigues de Souza", "correct": true}, {"text": "Professores universitários", "correct": false}, {"text": "Políticos locais", "correct": false}, {"text": "Grupo anônimo", "correct": false}]}, {"question": "Em que cidade o trabalho foi produzido?", "answers": [{"text": "Açailândia – MA", "correct": true}, {"text": "São Luís – MA", "correct": false}, {"text": "Imperatriz – MA", "correct": false}, {"text": "Balsas – MA", "correct": false}]}, {"question": "Qual disciplina o trabalho atende como requisito?", "answers": [{"text": "Ética e Cidadania", "correct": true}, {"text": "Matemática", "correct": false}, {"text": "Geografia", "correct": false}, {"text": "Educação Física", "correct": false}]}, {"question": "Qual professor orientou o trabalho?", "answers": [{"text": "Ronilson", "correct": true}, {"text": "Marcelo", "correct": false}, {"text": "Fernanda", "correct": false}, {"text": "Carlos", "correct": false}]}, {"question": "Analisando a capa e contra-capa do trabalho, qual ano marca a produção deste estudo sobre Ética e Cidadania?", "answers": [{"text": "2026", "correct": true}, {"text": "2024", "correct": false}, {"text": "2025", "correct": false}, {"text": "2023", "correct": false}]}], [{"question": "No desenvolvimento, ética e cidadania orientam o quê?", "answers": [{"text": "A convivência social", "correct": true}, {"text": "Apenas o comércio", "correct": false}, {"text": "Somente a escola", "correct": false}, {"text": "Exclusivamente a internet", "correct": false}]}, {"question": "O que a ética define, segundo o texto?", "answers": [{"text": "O que é certo nas ações humanas", "correct": true}, {"text": "Apenas o lucro", "correct": false}, {"text": "Somente o lazer", "correct": false}, {"text": "Só as festas", "correct": false}]}, {"question": "Cidadania define o quê no contexto do trabalho?", "answers": [{"text": "Os deveres do cidadão", "correct": true}, {"text": "Apenas direitos sem deveres", "correct": false}, {"text": "Somente privilégios", "correct": false}, {"text": "Nada em específico", "correct": false}]}, {"question": "Quais autores contribuíram para o estudo da ética citados no trabalho?", "answers": [{"text": "Aristóteles e Kant", "correct": true}, {"text": "Platão e Newton", "correct": false}, {"text": "Einstein e Darwin", "correct": false}, {"text": "Freud e Marx", "correct": false}]}, {"question": "Na prática, onde esses conceitos aparecem?", "answers": [{"text": "No respeito, nas leis e na participação social", "correct": true}, {"text": "Apenas em livros", "correct": false}, {"text": "Somente em filmes", "correct": false}, {"text": "Só em discursos", "correct": false}]}, {"question": "Ética e cidadania são fundamentais para qual tipo de sociedade?", "answers": [{"text": "Equilibrada", "correct": true}, {"text": "Autoritária", "correct": false}, {"text": "Anárquica", "correct": false}, {"text": "Desigual", "correct": false}]}, {"question": "O estudo da ética busca definir:", "answers": [{"text": "Certo e errado nas ações", "correct": true}, {"text": "Preços de mercado", "correct": false}, {"text": "Regras de futebol", "correct": false}, {"text": "Receitas culinárias", "correct": false}]}, {"question": "A cidadania permite o quê ao indivíduo?", "answers": [{"text": "Participação ativa na sociedade", "correct": true}, {"text": "Isolamento social", "correct": false}, {"text": "Fuga de responsabilidades", "correct": false}, {"text": "Apenas consumir", "correct": false}]}, {"question": "Conforme a conclusão do tópico 2.9, qual é a relação de dependência entre ética e cidadania para uma participação social efetiva?", "answers": [{"text": "A ética fundamenta a cidadania responsável", "correct": true}, {"text": "São conceitos opostos", "correct": false}, {"text": "Não têm relação", "correct": false}, {"text": "Cidadania anula a ética", "correct": false}]}, {"question": "Sem valores éticos, a participação cidadã seria:", "answers": [{"text": "Menos responsável", "correct": true}, {"text": "Mais eficaz", "correct": false}, {"text": "Igual", "correct": false}, {"text": "Desnecessária", "correct": false}]}], [{"question": "Segundo o tópico 2.4, ética é:", "answers": [{"text": "Estudo dos valores que orientam o comportamento humano", "correct": true}, {"text": "Conjunto de leis municipais", "correct": false}, {"text": "Manual de boas maneiras", "correct": false}, {"text": "Código penal", "correct": false}]}, {"question": "A ética busca definir:", "answers": [{"text": "O que é certo e errado nas ações", "correct": true}, {"text": "Qual time vai ganhar", "correct": false}, {"text": "A previsão do tempo", "correct": false}, {"text": "Moda atual", "correct": false}]}, {"question": "Ética se relaciona com:", "answers": [{"text": "Comportamento humano", "correct": true}, {"text": "Apenas animais", "correct": false}, {"text": "Somente máquinas", "correct": false}, {"text": "Exclusivamente plantas", "correct": false}]}, {"question": "O estudo da ética é importante para:", "answers": [{"text": "Guiar decisões morais", "correct": true}, {"text": "Calcular impostos", "correct": false}, {"text": "Construir pontes", "correct": false}, {"text": "Fazer propaganda", "correct": false}]}, {"question": "Valores éticos influenciam:", "answers": [{"text": "Ações individuais e coletivas", "correct": true}, {"text": "Apenas o sono", "correct": false}, {"text": "Somente a altura", "correct": false}, {"text": "Só o clima", "correct": false}]}, {"question": "Segundo o estudo apresentado, a principal distinção conceitual entre ética e lei reside em qual aspecto?", "answers": [{"text": "Lei é norma jurídica, ética é valor moral", "correct": true}, {"text": "São idênticas", "correct": false}, {"text": "Ética é mais fraca", "correct": false}, {"text": "Lei não importa", "correct": false}]}, {"question": "Com base na distinção entre norma jurídica e valor moral discutida no trabalho, uma ação juridicamente legal pode ser considerada:", "answers": [{"text": "Antiética", "correct": true}, {"text": "Sempre ética", "correct": false}, {"text": "Obrigatória", "correct": false}, {"text": "Sem consequência", "correct": false}]}, {"question": "A ética está presente:", "answers": [{"text": "Em todas as áreas da vida", "correct": true}, {"text": "Apenas na escola", "correct": false}, {"text": "Só no trabalho", "correct": false}, {"text": "Somente em casa", "correct": false}]}, {"question": "Objetivo do estudo da ética é:", "answers": [{"text": "Formar consciência crítica sobre o agir", "correct": true}, {"text": "Decorar regras", "correct": false}, {"text": "Evitar pensar", "correct": false}, {"text": "Seguir a maioria", "correct": false}]}, {"question": "Ética e moral se relacionam porque:", "answers": [{"text": "Moral é prática, ética é reflexão sobre a moral", "correct": true}, {"text": "São inimigas", "correct": false}, {"text": "Não se falam", "correct": false}, {"text": "Ética copia a lei", "correct": false}]}], [{"question": "Na ética aristotélica apresentada no trabalho, a virtude é definida como qual conceito central para o equilíbrio moral?", "answers": [{"text": "O meio-termo entre extremos", "correct": true}, {"text": "O extremo sempre", "correct": false}, {"text": "Não existe", "correct": false}, {"text": "Só para ricos", "correct": false}]}, {"question": "Kant é conhecido pelo conceito de:", "answers": [{"text": "Imperativo categórico", "correct": true}, {"text": "Relatividade total", "correct": false}, {"text": "Prazer acima de tudo", "correct": false}, {"text": "Acaso", "correct": false}]}, {"question": "Segundo Kant, conforme citado no trabalho, o imperativo categórico estabelece que o indivíduo deve agir de que maneira?", "answers": [{"text": "Aja como se sua ação fosse lei universal", "correct": true}, {"text": "Faça o que der vontade", "correct": false}, {"text": "Siga o mais forte", "correct": false}, {"text": "Ignore os outros", "correct": false}]}, {"question": "Aristóteles relaciona ética com:", "answers": [{"text": "Busca da felicidade pela virtude", "correct": true}, {"text": "Dor constante", "correct": false}, {"text": "Dinheiro", "correct": false}, {"text": "Fama", "correct": false}]}, {"question": "Kant enfatiza:", "answers": [{"text": "O dever por respeito à lei moral", "correct": true}, {"text": "Apenas consequências", "correct": false}, {"text": "Só emoção", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Ambos os autores contribuíram para:", "answers": [{"text": "Fundamentar o pensamento ético ocidental", "correct": true}, {"text": "Acabar com a ética", "correct": false}, {"text": "Criar leis fiscais", "correct": false}, {"text": "Pintar quadros", "correct": false}]}, {"question": "Ética aristotélica é chamada de:", "answers": [{"text": "Ética das virtudes", "correct": true}, {"text": "Ética do prazer", "correct": false}, {"text": "Ética do poder", "correct": false}, {"text": "Ética do medo", "correct": false}]}, {"question": "Ética kantiana é chamada de:", "answers": [{"text": "Ética do dever", "correct": true}, {"text": "Ética da sorte", "correct": false}, {"text": "Ética do dinheiro", "correct": false}, {"text": "Ética da moda", "correct": false}]}, {"question": "Para Kant, uma ação tem valor moral quando:", "answers": [{"text": "É feita por dever", "correct": true}, {"text": "Traz vantagem", "correct": false}, {"text": "É secreta", "correct": false}, {"text": "É popular", "correct": false}]}, {"question": "Aristóteles viveu em:", "answers": [{"text": "Grécia Antiga", "correct": true}, {"text": "Idade Média", "correct": false}, {"text": "Século XXI", "correct": false}, {"text": "Futuro", "correct": false}]}], [{"question": "No tópico 2.7 do trabalho, a cidadania é conceituada como o exercício simultâneo de quais dimensões?", "answers": [{"text": "Direitos e deveres civis, políticos e sociais", "correct": true}, {"text": "Apenas direitos", "correct": false}, {"text": "Só deveres", "correct": false}, {"text": "Nenhum dos dois", "correct": false}]}, {"question": "Direitos civis incluem:", "answers": [{"text": "Liberdade de expressão", "correct": true}, {"text": "Só votar", "correct": false}, {"text": "Apenas trabalhar", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Direitos políticos incluem:", "answers": [{"text": "Votar e ser votado", "correct": true}, {"text": "Só pagar taxa", "correct": false}, {"text": "Apenas assistir TV", "correct": false}, {"text": "Dormir", "correct": false}]}, {"question": "Direitos sociais incluem:", "answers": [{"text": "Educação e saúde", "correct": true}, {"text": "Só internet", "correct": false}, {"text": "Apenas carro", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Deveres do cidadão incluem:", "answers": [{"text": "Respeitar leis e o próximo", "correct": true}, {"text": "Ignorar tudo", "correct": false}, {"text": "Só reclamar", "correct": false}, {"text": "Quebrar regras", "correct": false}]}, {"question": "Cidadania ativa significa:", "answers": [{"text": "Participar das decisões coletivas", "correct": true}, {"text": "Ficar calado", "correct": false}, {"text": "Só observar", "correct": false}, {"text": "Fugir", "correct": false}]}, {"question": "Sem cidadania, a democracia:", "answers": [{"text": "Se enfraquece", "correct": true}, {"text": "Melhora", "correct": false}, {"text": "Não muda", "correct": false}, {"text": "Some", "correct": false}]}, {"question": "Cidadania se aprende:", "answers": [{"text": "Na escola, família e sociedade", "correct": true}, {"text": "Só na TV", "correct": false}, {"text": "Nunca", "correct": false}, {"text": "Só com dinheiro", "correct": false}]}, {"question": "Respeitar o espaço público é ato de:", "answers": [{"text": "Cidadania", "correct": true}, {"text": "Egoísmo", "correct": false}, {"text": "Vaidade", "correct": false}, {"text": "Preguiça", "correct": false}]}, {"question": "Cidadania e ética se conectam porque:", "answers": [{"text": "Ética dá base para agir com responsabilidade cidadã", "correct": true}, {"text": "São opostas", "correct": false}, {"text": "Não se relacionam", "correct": false}, {"text": "Cidadania nega ética", "correct": false}]}], [{"question": "Fase 6 - Revisão: Segundo o trabalho, qual é o papel da ética e da cidadania na vida em sociedade?", "answers": [{"text": "Orientam o comportamento e o exercício de direitos e deveres", "correct": true}, {"text": "Servem apenas para decorar provas", "correct": false}, {"text": "São conceitos sem aplicação prática", "correct": false}, {"text": "Limitam a liberdade individual", "correct": false}]}, {"question": "Fase 6 - Revisão: A ética, conforme o texto, trata de quê?", "answers": [{"text": "Valores que guiam as ações humanas", "correct": true}, {"text": "Apenas de leis penais", "correct": false}, {"text": "Exclusivamente de economia", "correct": false}, {"text": "Somente de tradições familiares", "correct": false}]}, {"question": "Fase 6 - Revisão: Cidadania envolve o quê no texto apresentado?", "answers": [{"text": "Participação social e responsabilidade", "correct": true}, {"text": "Apenas pagar impostos", "correct": false}, {"text": "Só votar a cada 4 anos", "correct": false}, {"text": "Ignorar os problemas coletivos", "correct": false}]}, {"question": "Fase 6 - Revisão: De acordo com a introdução do trabalho, qual é a consequência direta da aplicação conjunta da ética e da cidadania na estrutura social?", "answers": [{"text": "Formação de cidadãos conscientes e sociedade mais justa", "correct": true}, {"text": "Aumento da burocracia", "correct": false}, {"text": "Conflitos entre pessoas", "correct": false}, {"text": "Redução de direitos", "correct": false}]}, {"question": "Fase 6 - Revisão: O texto afirma que ética e cidadania ajudam a construir que tipo de sociedade?", "answers": [{"text": "Mais justa", "correct": true}, {"text": "Mais individualista", "correct": false}, {"text": "Menos participativa", "correct": false}, {"text": "Sem regras", "correct": false}]}, {"question": "Fase 6 - Revisão: Quem apresentou o trabalho sobre Ética e Cidadania?", "answers": [{"text": "Alunos da Escola Municipal Fernando Rodrigues de Souza", "correct": true}, {"text": "Professores universitários", "correct": false}, {"text": "Políticos locais", "correct": false}, {"text": "Grupo anônimo", "correct": false}]}, {"question": "Fase 6 - Revisão: Em que cidade o trabalho foi produzido?", "answers": [{"text": "Açailândia – MA", "correct": true}, {"text": "São Luís – MA", "correct": false}, {"text": "Imperatriz – MA", "correct": false}, {"text": "Balsas – MA", "correct": false}]}, {"question": "Fase 6 - Revisão: Qual disciplina o trabalho atende como requisito?", "answers": [{"text": "Ética e Cidadania", "correct": true}, {"text": "Matemática", "correct": false}, {"text": "Geografia", "correct": false}, {"text": "Educação Física", "correct": false}]}, {"question": "Fase 6 - Revisão: Qual professor orientou o trabalho?", "answers": [{"text": "Ronilson", "correct": true}, {"text": "Marcelo", "correct": false}, {"text": "Fernanda", "correct": false}, {"text": "Carlos", "correct": false}]}, {"question": "Fase 6 - Revisão: Analisando a capa e contra-capa do trabalho, qual ano marca a produção deste estudo sobre Ética e Cidadania?", "answers": [{"text": "2026", "correct": true}, {"text": "2024", "correct": false}, {"text": "2025", "correct": false}, {"text": "2023", "correct": false}]}], [{"question": "Fase 7 - Revisão: No desenvolvimento, ética e cidadania orientam o quê?", "answers": [{"text": "A convivência social", "correct": true}, {"text": "Apenas o comércio", "correct": false}, {"text": "Somente a escola", "correct": false}, {"text": "Exclusivamente a internet", "correct": false}]}, {"question": "Fase 7 - Revisão: O que a ética define, segundo o texto?", "answers": [{"text": "O que é certo nas ações humanas", "correct": true}, {"text": "Apenas o lucro", "correct": false}, {"text": "Somente o lazer", "correct": false}, {"text": "Só as festas", "correct": false}]}, {"question": "Fase 7 - Revisão: Cidadania define o quê no contexto do trabalho?", "answers": [{"text": "Os deveres do cidadão", "correct": true}, {"text": "Apenas direitos sem deveres", "correct": false}, {"text": "Somente privilégios", "correct": false}, {"text": "Nada em específico", "correct": false}]}, {"question": "Fase 7 - Revisão: Quais autores contribuíram para o estudo da ética citados no trabalho?", "answers": [{"text": "Aristóteles e Kant", "correct": true}, {"text": "Platão e Newton", "correct": false}, {"text": "Einstein e Darwin", "correct": false}, {"text": "Freud e Marx", "correct": false}]}, {"question": "Fase 7 - Revisão: Na prática, onde esses conceitos aparecem?", "answers": [{"text": "No respeito, nas leis e na participação social", "correct": true}, {"text": "Apenas em livros", "correct": false}, {"text": "Somente em filmes", "correct": false}, {"text": "Só em discursos", "correct": false}]}, {"question": "Fase 7 - Revisão: Ética e cidadania são fundamentais para qual tipo de sociedade?", "answers": [{"text": "Equilibrada", "correct": true}, {"text": "Autoritária", "correct": false}, {"text": "Anárquica", "correct": false}, {"text": "Desigual", "correct": false}]}, {"question": "Fase 7 - Revisão: O estudo da ética busca definir:", "answers": [{"text": "Certo e errado nas ações", "correct": true}, {"text": "Preços de mercado", "correct": false}, {"text": "Regras de futebol", "correct": false}, {"text": "Receitas culinárias", "correct": false}]}, {"question": "Fase 7 - Revisão: A cidadania permite o quê ao indivíduo?", "answers": [{"text": "Participação ativa na sociedade", "correct": true}, {"text": "Isolamento social", "correct": false}, {"text": "Fuga de responsabilidades", "correct": false}, {"text": "Apenas consumir", "correct": false}]}, {"question": "Fase 7 - Revisão: Conforme a conclusão do tópico 2.9, qual é a relação de dependência entre ética e cidadania para uma participação social efetiva?", "answers": [{"text": "A ética fundamenta a cidadania responsável", "correct": true}, {"text": "São conceitos opostos", "correct": false}, {"text": "Não têm relação", "correct": false}, {"text": "Cidadania anula a ética", "correct": false}]}, {"question": "Fase 7 - Revisão: Sem valores éticos, a participação cidadã seria:", "answers": [{"text": "Menos responsável", "correct": true}, {"text": "Mais eficaz", "correct": false}, {"text": "Igual", "correct": false}, {"text": "Desnecessária", "correct": false}]}], [{"question": "Fase 8 - Revisão: Segundo o tópico 2.4, ética é:", "answers": [{"text": "Estudo dos valores que orientam o comportamento humano", "correct": true}, {"text": "Conjunto de leis municipais", "correct": false}, {"text": "Manual de boas maneiras", "correct": false}, {"text": "Código penal", "correct": false}]}, {"question": "Fase 8 - Revisão: A ética busca definir:", "answers": [{"text": "O que é certo e errado nas ações", "correct": true}, {"text": "Qual time vai ganhar", "correct": false}, {"text": "A previsão do tempo", "correct": false}, {"text": "Moda atual", "correct": false}]}, {"question": "Fase 8 - Revisão: Ética se relaciona com:", "answers": [{"text": "Comportamento humano", "correct": true}, {"text": "Apenas animais", "correct": false}, {"text": "Somente máquinas", "correct": false}, {"text": "Exclusivamente plantas", "correct": false}]}, {"question": "Fase 8 - Revisão: O estudo da ética é importante para:", "answers": [{"text": "Guiar decisões morais", "correct": true}, {"text": "Calcular impostos", "correct": false}, {"text": "Construir pontes", "correct": false}, {"text": "Fazer propaganda", "correct": false}]}, {"question": "Fase 8 - Revisão: Valores éticos influenciam:", "answers": [{"text": "Ações individuais e coletivas", "correct": true}, {"text": "Apenas o sono", "correct": false}, {"text": "Somente a altura", "correct": false}, {"text": "Só o clima", "correct": false}]}, {"question": "Fase 8 - Revisão: Segundo o estudo apresentado, a principal distinção conceitual entre ética e lei reside em qual aspecto?", "answers": [{"text": "Lei é norma jurídica, ética é valor moral", "correct": true}, {"text": "São idênticas", "correct": false}, {"text": "Ética é mais fraca", "correct": false}, {"text": "Lei não importa", "correct": false}]}, {"question": "Fase 8 - Revisão: Com base na distinção entre norma jurídica e valor moral discutida no trabalho, uma ação juridicamente legal pode ser considerada:", "answers": [{"text": "Antiética", "correct": true}, {"text": "Sempre ética", "correct": false}, {"text": "Obrigatória", "correct": false}, {"text": "Sem consequência", "correct": false}]}, {"question": "Fase 8 - Revisão: A ética está presente:", "answers": [{"text": "Em todas as áreas da vida", "correct": true}, {"text": "Apenas na escola", "correct": false}, {"text": "Só no trabalho", "correct": false}, {"text": "Somente em casa", "correct": false}]}, {"question": "Fase 8 - Revisão: Objetivo do estudo da ética é:", "answers": [{"text": "Formar consciência crítica sobre o agir", "correct": true}, {"text": "Decorar regras", "correct": false}, {"text": "Evitar pensar", "correct": false}, {"text": "Seguir a maioria", "correct": false}]}, {"question": "Fase 8 - Revisão: Ética e moral se relacionam porque:", "answers": [{"text": "Moral é prática, ética é reflexão sobre a moral", "correct": true}, {"text": "São inimigas", "correct": false}, {"text": "Não se falam", "correct": false}, {"text": "Ética copia a lei", "correct": false}]}], [{"question": "Fase 9 - Revisão: Na ética aristotélica apresentada no trabalho, a virtude é definida como qual conceito central para o equilíbrio moral?", "answers": [{"text": "O meio-termo entre extremos", "correct": true}, {"text": "O extremo sempre", "correct": false}, {"text": "Não existe", "correct": false}, {"text": "Só para ricos", "correct": false}]}, {"question": "Fase 9 - Revisão: Kant é conhecido pelo conceito de:", "answers": [{"text": "Imperativo categórico", "correct": true}, {"text": "Relatividade total", "correct": false}, {"text": "Prazer acima de tudo", "correct": false}, {"text": "Acaso", "correct": false}]}, {"question": "Fase 9 - Revisão: Segundo Kant, conforme citado no trabalho, o imperativo categórico estabelece que o indivíduo deve agir de que maneira?", "answers": [{"text": "Aja como se sua ação fosse lei universal", "correct": true}, {"text": "Faça o que der vontade", "correct": false}, {"text": "Siga o mais forte", "correct": false}, {"text": "Ignore os outros", "correct": false}]}, {"question": "Fase 9 - Revisão: Aristóteles relaciona ética com:", "answers": [{"text": "Busca da felicidade pela virtude", "correct": true}, {"text": "Dor constante", "correct": false}, {"text": "Dinheiro", "correct": false}, {"text": "Fama", "correct": false}]}, {"question": "Fase 9 - Revisão: Kant enfatiza:", "answers": [{"text": "O dever por respeito à lei moral", "correct": true}, {"text": "Apenas consequências", "correct": false}, {"text": "Só emoção", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Fase 9 - Revisão: Ambos os autores contribuíram para:", "answers": [{"text": "Fundamentar o pensamento ético ocidental", "correct": true}, {"text": "Acabar com a ética", "correct": false}, {"text": "Criar leis fiscais", "correct": false}, {"text": "Pintar quadros", "correct": false}]}, {"question": "Fase 9 - Revisão: Ética aristotélica é chamada de:", "answers": [{"text": "Ética das virtudes", "correct": true}, {"text": "Ética do prazer", "correct": false}, {"text": "Ética do poder", "correct": false}, {"text": "Ética do medo", "correct": false}]}, {"question": "Fase 9 - Revisão: Ética kantiana é chamada de:", "answers": [{"text": "Ética do dever", "correct": true}, {"text": "Ética da sorte", "correct": false}, {"text": "Ética do dinheiro", "correct": false}, {"text": "Ética da moda", "correct": false}]}, {"question": "Fase 9 - Revisão: Para Kant, uma ação tem valor moral quando:", "answers": [{"text": "É feita por dever", "correct": true}, {"text": "Traz vantagem", "correct": false}, {"text": "É secreta", "correct": false}, {"text": "É popular", "correct": false}]}, {"question": "Fase 9 - Revisão: Aristóteles viveu em:", "answers": [{"text": "Grécia Antiga", "correct": true}, {"text": "Idade Média", "correct": false}, {"text": "Século XXI", "correct": false}, {"text": "Futuro", "correct": false}]}], [{"question": "Fase 10 - Revisão: No tópico 2.7 do trabalho, a cidadania é conceituada como o exercício simultâneo de quais dimensões?", "answers": [{"text": "Direitos e deveres civis, políticos e sociais", "correct": true}, {"text": "Apenas direitos", "correct": false}, {"text": "Só deveres", "correct": false}, {"text": "Nenhum dos dois", "correct": false}]}, {"question": "Fase 10 - Revisão: Direitos civis incluem:", "answers": [{"text": "Liberdade de expressão", "correct": true}, {"text": "Só votar", "correct": false}, {"text": "Apenas trabalhar", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Fase 10 - Revisão: Direitos políticos incluem:", "answers": [{"text": "Votar e ser votado", "correct": true}, {"text": "Só pagar taxa", "correct": false}, {"text": "Apenas assistir TV", "correct": false}, {"text": "Dormir", "correct": false}]}, {"question": "Fase 10 - Revisão: Direitos sociais incluem:", "answers": [{"text": "Educação e saúde", "correct": true}, {"text": "Só internet", "correct": false}, {"text": "Apenas carro", "correct": false}, {"text": "Nada", "correct": false}]}, {"question": "Fase 10 - Revisão: Deveres do cidadão incluem:", "answers": [{"text": "Respeitar leis e o próximo", "correct": true}, {"text": "Ignorar tudo", "correct": false}, {"text": "Só reclamar", "correct": false}, {"text": "Quebrar regras", "correct": false}]}, {"question": "Fase 10 - Revisão: Cidadania ativa significa:", "answers": [{"text": "Participar das decisões coletivas", "correct": true}, {"text": "Ficar calado", "correct": false}, {"text": "Só observar", "correct": false}, {"text": "Fugir", "correct": false}]}, {"question": "Fase 10 - Revisão: Sem cidadania, a democracia:", "answers": [{"text": "Se enfraquece", "correct": true}, {"text": "Melhora", "correct": false}, {"text": "Não muda", "correct": false}, {"text": "Some", "correct": false}]}, {"question": "Fase 10 - Revisão: Cidadania se aprende:", "answers": [{"text": "Na escola, família e sociedade", "correct": true}, {"text": "Só na TV", "correct": false}, {"text": "Nunca", "correct": false}, {"text": "Só com dinheiro", "correct": false}]}, {"question": "Fase 10 - Revisão: Respeitar o espaço público é ato de:", "answers": [{"text": "Cidadania", "correct": true}, {"text": "Egoísmo", "correct": false}, {"text": "Vaidade", "correct": false}, {"text": "Preguiça", "correct": false}]}, {"question": "Fase 10 - Revisão: Cidadania e ética se conectam porque:", "answers": [{"text": "Ética dá base para agir com responsabilidade cidadã", "correct": true}, {"text": "São opostas", "correct": false}, {"text": "Não se relacionam", "correct": false}, {"text": "Cidadania nega ética", "correct": false}]}]];
+
+
+
+function salvarProgressoFase(){
+let progresso = JSON.parse(localStorage.getItem('quizProgresso') || '{}');
+progresso[`fase${currentPhase+1}`] = {pontos: phaseScore, acertos: hits, erros: errors};
+progresso.totalGeral = totalScore;
+localStorage.setItem('quizProgresso', JSON.stringify(progresso));
 }
 
-const phases = [
-createQuestions(1),
-createQuestions(2),
-createQuestions(3),
-createQuestions(4),
-createQuestions(5),
-createQuestions(6),
-createQuestions(7),
-createQuestions(8),
-createQuestions(9),
-createQuestions(10)
-];
+function limparProgresso(){
+localStorage.removeItem('quizProgresso');
+localStorage.removeItem('quizRanking');
+totalScore = 0;
+currentPhase = 0;
+location.reload();
+}
+
+function saveScore(){
+let nome = prompt("Digite seu nome para salvar no ranking:");
+if(!nome) nome = "Anônimo";
+let ranking = JSON.parse(localStorage.getItem('quizRanking') || '[]');
+ranking.push({nome: nome, pontos: totalScore});
+ranking.sort((a,b) => b.pontos - a.pontos);
+ranking = ranking.slice(0, 10);
+localStorage.setItem('quizRanking', JSON.stringify(ranking));
+}
+
+function showRanking(){
+let ranking = JSON.parse(localStorage.getItem('quizRanking') || '[]');
+let html = '';
+if(ranking.length === 0){
+html = '<div>Nenhuma pontuação salva ainda!</div>';
+}else{
+ranking.forEach((item, i) => {
+let medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}º`;
+html += `<div>${medal} ${item.nome} - ${item.pontos} pts</div>`;
+});
+}
+document.getElementById('rankingList').innerHTML = html;
+document.getElementById('rankingModal').style.display = 'flex';
+}
 
 let currentPhase = 0;
 let currentQuestion = 0;
-let score = 0;
+let phaseScore = 0;
+let totalScore = 0;
 let hits = 0;
 let errors = 0;
-let time = 15;
+let time = 10;
 let timer;
 
 const start = document.getElementById("start");
@@ -242,61 +286,54 @@ const result = document.getElementById("result");
 function startGame(){
 start.classList.remove("active");
 quiz.classList.add("active");
+phaseScore = 0;
+hits = 0;
+errors = 0;
+currentQuestion = 0;
 showQuestion();
 }
 
 function startTimer(){
 clearInterval(timer);
-time = 15;
+time = 10;
 document.getElementById("timer").innerHTML = `⏳ ${time}s`;
-
 timer = setInterval(()=>{
 time--;
 document.getElementById("timer").innerHTML = `⏳ ${time}s`;
-
 if(time <= 0){
 clearInterval(timer);
 errors++;
-feedback("⏰ TEMPO!",false);
+feedback("⏰ Tempo esgotado!",false);
 }
 },1000);
 }
 
 function showQuestion(){
 const q = phases[currentPhase][currentQuestion];
-
 document.getElementById("phase").innerHTML = `🏆 Fase ${currentPhase+1}`;
 document.getElementById("counter").innerHTML = `📚 ${currentQuestion+1}/10`;
-document.getElementById("score").innerHTML = `⭐ ${score}`;
+document.getElementById("score").innerHTML = `⭐ ${phaseScore}`;
 document.getElementById("question").innerHTML = q.question;
-
 document.getElementById("bar").style.width = `${((currentQuestion+1)/10)*100}%`;
-
 const answers = document.getElementById("answers");
 answers.innerHTML = "";
-
 q.answers.sort(()=>Math.random()-0.5);
-
 q.answers.forEach(a=>{
 const btn = document.createElement("button");
 btn.innerHTML = a.text;
-
 btn.onclick = ()=>{
 clearInterval(timer);
-
 if(a.correct){
-score += 10;
+phaseScore += 10;
 hits++;
-feedback("✅ ACERTOU",true);
+feedback("✅ Você acertou!",true);
 }else{
 errors++;
-feedback("❌ ERROU",false);
+feedback("❌ Você errou!",false);
 }
 };
-
 answers.appendChild(btn);
 });
-
 startTimer();
 }
 
@@ -305,11 +342,10 @@ const msg = document.getElementById("message");
 msg.innerHTML = text;
 msg.className = correct ? "correct" : "wrong";
 msg.style.display = "block";
-
+msg.style.fontSize = "20vw";
 setTimeout(()=>{
 msg.style.display = "none";
 currentQuestion++;
-
 if(currentQuestion < 10){
 showQuestion();
 }else{
@@ -321,30 +357,45 @@ showResults();
 function showResults(){
 quiz.classList.remove("active");
 result.classList.add("active");
-
-document.getElementById("points").innerHTML = `⭐ Pontuação: ${score}`;
-document.getElementById("hits").innerHTML = `✅ Você acertou: ${hits}`;
-document.getElementById("errors").innerHTML = `❌ Você errou: ${errors}`;
-
-if(currentPhase === 9){
-document.getElementById("nextBtn").style.display = "none";
-document.getElementById("msg").innerHTML = "🏆 Parabéns! Você concluiu todas as 10 fases!";
-}else{
-document.getElementById("nextBtn").style.display = "block";
-document.getElementById("msg").innerHTML = "🚀 Prepare-se para a próxima fase!";
+totalScore += phaseScore;
+salvarProgressoFase();
+if(phaseScore === 100){
+confetti({particleCount: 200, spread: 100, origin: { y: 0.6 }});
+setTimeout(() => confetti({particleCount: 100, spread: 120}), 250);
+setTimeout(() => confetti({particleCount: 100, spread: 120}), 500);
 }
+let porcentagemAcertos = (hits / 10) * 100;
+let porcentagemErros = (errors / 10) * 100;
+document.getElementById("points").innerHTML = `✅ Acertos: ${porcentagemAcertos.toFixed(0)}%`;
+document.getElementById("hits").innerHTML = `❌ Erros: ${porcentagemErros.toFixed(0)}%`;
+document.getElementById("errors").innerHTML = `⭐ Pontos da fase: ${phaseScore}/100`;
+let msg = "";
+if(phaseScore >= 80){ msg = "Excelente desempenho!"; }
+else if(phaseScore >= 60){ msg = "Bom resultado!"; }
+else { msg = "Estude mais o conteúdo."; }
+document.getElementById("msg").innerHTML = msg;
+document.getElementById("nextBtn").style.display = currentPhase < 9 ? "block" : "none";
 }
+
 
 function nextPhase(){
 currentPhase++;
 currentQuestion = 0;
-
+phaseScore = 0;
+hits = 0;
+errors = 0;
 result.classList.remove("active");
 quiz.classList.add("active");
-
 showQuestion();
 }
+
 </script>
 
-</body>
+<div id="rankingModal" onclick="this.style.display='none'">
+<div id="rankingContent" onclick="event.stopPropagation()">
+<h2>🏆 Ranking Local</h2>
+<div id="rankingList"></div>
+<button class="main-btn" onclick="document.getElementById('rankingModal').style.display='none'">Fechar</button>
+</div>
+</div></body>
 </html>
